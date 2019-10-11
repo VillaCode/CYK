@@ -10,6 +10,8 @@ export class AppComponent {
   constructor(){
     this.hola();
   }
+
+  resp:boolean = true;
   
   title = 'CYK Algorithm';
 

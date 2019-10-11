@@ -66,23 +66,7 @@ transition: all 0.2s ease-in-out;
 line-height: 24px;
 }
 
-.card-container .card:not(:last-child) {
-margin-right: 0;
-}
 
-.card.card-small {
-height: 16px;
-width: 168px;
-}
-
-.card-container .card:not(.highlight-card) {
-cursor: pointer;
-}
-
-.card-container .card:not(.highlight-card):hover {
-transform: translateY(-3px);
-box-shadow: 0 4px 17px rgba(black, 0.35);
-}
 
 
 svg#clouds {
@@ -94,22 +78,52 @@ width: 1920px;
 }
 
 
+.maincard{
+    margin-top: 5%;
+    background: rgba(255, 0, 0, 0.103);
+    height: 400px;
+    width: 640px;
+    padding-top: 5vh;
+    
+}
+
+.genes{
+    position: relative;
+    left: 45%;
+    margin: 10px;
+    display: inline-block;
+
+}
+
+.bot{
+    display: inline-block;
+    margin-left: 190px;
+    width: 7vw;
+}
+
+.inputs{
+    display: inline-block;
+}
+
+.resp{
+    position: relative;
+    font-size: 800%;
+    font: xx-large;
+    color: red;
+}
+
+#falso{
+    margin-left: 26%;
+    margin-top: 7%;
+}
+
+#verdadero{
+    margin-left: 1%;
+    margin-top: 7%;
+}
+
 /* Responsive Styles */
 @media screen and (max-width: 767px) {
-
-.card-container > *:not(.circle-link) ,
-.terminal {
-    width: 100%;
-}
-
-.card:not(.highlight-card) {
-    height: 16px;
-    margin: 8px 0;
-}
-
-.card.highlight-card span {
-    margin-left: 72px;
-}
 
 svg#rocket-smoke {
     right: 120px;
