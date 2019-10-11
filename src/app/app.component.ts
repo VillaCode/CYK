@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ɵConsole } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -7,22 +7,67 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   
+  //iniciales
+  resp:boolean;
+  palabra:string;
+  cykTabla:any[][];
+  generadoresArray:any[];
+  bTrack:any[];
+
   constructor(){
-    this.hola();
+    this.generadoresArray = new Array();
+    this.cykTabla = [];
+    this.bTrack = [];
+    this.resp = true;
+    this.palabra = '';
+
+  };
+
+
+
+  ///////////////////////////Algoritmo cyk main///////////////////////////////
+
+  cyk(palabra:string){
+    console.log(this.generadoresArray); //debug
+    console.log(this.palabra); //debug
+
+
+    this.inicializaTabla(palabra);
+    this.guardaPalabra(palabra);
+
   }
 
-  resp:boolean = true;
+
+
+  ///////////////////////////////Utilidades///////////////////////////////////
   
-  title = 'CYK Algorithm';
+  inicializaTabla(palabra:string){
 
-
-  hola(){
-    console.log("Hola!")
   }
 
+
+
+  verificaGenerado(){
+
+  }
+
+
+
+  guardaGen(generador:string){
+      this.generadoresArray.push([generador.split('>')[0], generador.split('>')[1]]);      
+  }
+
+
+
+  guardaPalabra(palabra:string){
+
+    this.palabra = palabra;
+    
+  }
+
+
   
+  guardaBTrack(){
 
-
-
-
+  }
 }

@@ -7,17 +7,29 @@
 
   <div class="maincard">
     <div class="inputs">  
-        <input class="genes" placeholder="Generadores (S>AC)" type="text">
-        <button class="bot"> Guardar </button>
+        <input #generadores class="genes" placeholder="Generadores (S>AC)" type="text">
+        <button class="bot" (click)="guardaGen(generadores.value)"> Guardar </button>
     </div>
 
     <div class="inputs">  
-      <input class="genes" placeholder="Palabra a evaluar" type="text">
-      <button class="bot"> Consultar </button>
+      <input #palabra class="genes" id="palabra" placeholder="Palabra a evaluar" type="text">
+      <button class="bot" (click)="cyk(palabra.value)"> Consultar </button>
     </div>
 
-    <div class="resp" id="falso" *ngIf="!(resp)">FALSO</div>
-    <div class="resp" id="verdadero" *ngIf="(resp)">VERDADERO</div>
+    <div id="generadoresDisplay">
+      <ul id="columnas">
+        <li *ngFor="let generador of generadoresArray">
+          {{generador[0]}} --> {{generador[1]}}
+        </li>
+      </ul>
+
+    </div>
+
+    <div class="resp" id="falso" *ngIf="!(resp)">NO PERTENECE</div>
+    <div class="resp" id="verdadero" *ngIf="(resp)">SI PERTENECE</div>
+
+    
+
   
   </div>
 

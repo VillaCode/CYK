@@ -83,7 +83,7 @@ width: 1920px;
     background: rgba(255, 0, 0, 0.103);
     height: 400px;
     width: 640px;
-    padding-top: 5vh;
+    padding-top: 20px;
     
 }
 
@@ -107,20 +107,34 @@ width: 1920px;
 
 .resp{
     position: relative;
-    font-size: 800%;
+    font-size: 400%;
     font: xx-large;
     color: red;
 }
 
 #falso{
-    margin-left: 26%;
-    margin-top: 7%;
+    margin-left: 140px;
+    margin-top: 200px;
 }
 
 #verdadero{
-    margin-left: 1%;
-    margin-top: 7%;
+    margin-left: 150px;
+    margin-top: 10px;
 }
+
+#generadoresDisplay{
+    background: rgba(0, 0, 0, 0.486);
+    color: white;
+    height: 180px;
+    padding: 20px;
+}
+
+ul{
+    -webkit-columns: 4;
+    -moz-columns: 4;
+    columns: 4;
+}
+
 
 /* Responsive Styles */
 @media screen and (max-width: 767px) {
