@@ -40,38 +40,45 @@ export class AppComponent {
     console.log("--------------EMPIEZA--------------");//debug
     
 
-
+    let offSet = 1;
+    
     for(let columna = 1; columna <= maxI; columna++){ //Recorre horizontal
-      let j = maxI;
-      let k = 1;
-      for (let i = columna; i <= maxI; i++) { //Recorre en diagonal
+      let filaActual = maxI;
+      for (let colActual = columna; colActual <= maxI; colActual++) { //Recorre en diagonal
         //HASTA AQUI TENGO CASILLA ACTUAL
         let resp = new Array();
 
        
-        let m = j-1;
-          for(let p = i-k; p < i; p++){ //for para iterar producciones con respecto a actual
+        let checkFila = filaActual-1;
+          for(let checkCol = colActual-offSet; checkCol < colActual; checkCol++){ //for para iterar producciones con respecto a actual
             
-            let v = 0;
-            console.log(this.cykTabla[p][j][0]); //debug
-            console.log(this.cykTabla[i][m][0]); //debug
+            let respsCasilla = 0;
+            console.log("ACTUAL: " + colActual + "," + filaActual);
+            console.log("checkH: " + checkCol + "," + filaActual);
+            console.log("checkV: " + colActual + "," + checkFila);
+            console.log("offset: " + offSet);
+            
+            
+            
+            console.log(this.cykTabla[checkCol][filaActual][0]); //debug
+            console.log(this.cykTabla[colActual][checkFila][0]); //debug
 
-            while(this.cykTabla[p][j][v] || this.cykTabla[i][m][v]){ //Profundidad de casilla
+            while(this.cykTabla[checkCol][filaActual][respsCasilla] || this.cykTabla[colActual][checkFila][respsCasilla]){ //Profundidad de casilla
               console.log("entrawhile");
               
               let prod1;
               let prod2;
 
-              if (!this.cykTabla[p][j][v]) {
+              if (!this.cykTabla[checkCol][filaActual][respsCasilla]) {
                 prod1 = "";
               }else{
-                prod1 = this.cykTabla[p][j][v];
+                prod1 = this.cykTabla[checkCol][filaActual][respsCasilla];
               }
 
-              if (!this.cykTabla[i][m][v]) {
+              if (!this.cykTabla[colActual][checkFila][respsCasilla]) {
                 prod2 = "";
               }else{
-                prod2 = this.cykTabla[i][m][v];
+                prod2 = this.cykTabla[colActual][checkFila][respsCasilla];
               }
 
               let prod = prod1 + prod2;
@@ -83,9 +90,9 @@ export class AppComponent {
                 resp.push(this.verificaGenerado(prod));
               }
 
-              v++;
+              respsCasilla++;
             }
-            m--;
+            checkFila--;
             
           }
 
@@ -93,29 +100,29 @@ export class AppComponent {
         console.log("salio de primer FOR--------------------------------");
         
 
-        this.cykTabla[i][j].push(resp);
-        console.log(this.cykTabla[i][j]);
-                
-        j--;
+        this.cykTabla[colActual][filaActual].push(resp);                
+        filaActual--;
 
-        k++;
+        
       }
+      
+      offSet++;
       
     }
     
 
     console.log(this.cykTabla); //debug
 
-    let a = 0;
-    while(this.cykTabla[maxI][maxI][a]){
+    let respuestasCasilla = 0;
+    while(this.cykTabla[maxI][maxI][respuestasCasilla]){
 
-      if(this.cykTabla[maxI][maxI][a] == 'S'){
+      if(this.cykTabla[maxI][maxI][respuestasCasilla] == 'S'){
         this.resp = true;
       }else{
         this.resp = false;
       }
 
-      a++;
+      respuestasCasilla++;
     }
 
     this.primera = true;
@@ -176,7 +183,6 @@ export class AppComponent {
   }
 
   verificaGeneradoBoolean(prod:any) {
-    let productores: any[] = new Array();
     for (let i = 0; i < this.generadoresArray.length; i++) {
       if(this.generadoresArray[i][1] == prod){
         return true;
