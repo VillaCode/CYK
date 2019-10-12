@@ -81,7 +81,7 @@ width: 1920px;
 .maincard{
     margin-top: 5%;
     background: rgba(255, 0, 0, 0.103);
-    height: 400px;
+    height: 420px;
     width: 640px;
     padding-top: 20px;
     
@@ -114,7 +114,7 @@ width: 1920px;
 
 #falso{
     margin-left: 140px;
-    margin-top: 200px;
+    margin-top: 10px;
 }
 
 #verdadero{
@@ -127,6 +127,7 @@ width: 1920px;
     color: white;
     height: 180px;
     padding: 20px;
+    margin-top: 20px;
 }
 
 ul{

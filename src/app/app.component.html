@@ -25,9 +25,10 @@
 
     </div>
 
-    <div class="resp" id="falso" *ngIf="!(resp)">NO PERTENECE</div>
-    <div class="resp" id="verdadero" *ngIf="(resp)">SI PERTENECE</div>
-
+    <div *ngIf="(primera)">
+      <div class="resp" id="falso" *ngIf="!(resp)">NO PERTENECE</div>
+      <div class="resp" id="verdadero" *ngIf="(resp)">SI PERTENECE</div>
+    </div>
     
 
   
