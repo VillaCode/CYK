@@ -1,6 +1,5 @@
 import { Component, ɵConsole } from '@angular/core';
-import { LOADIPHLPAPI } from 'dns';
-import { concat } from 'rxjs';
+
 
 @Component({
   selector: 'app-root',
@@ -26,115 +25,100 @@ export class AppComponent {
 
 
   ///////////////////////////Algoritmo cyk main///////////////////////////////
-
+ 
   cyk(palabra: string) {
 
     this.palabra = palabra;
     this.inicializaTabla(palabra);
     let maxI = palabra.length - 1;
-
     
-    console.log(this.generadoresArray); //debug
-    console.log(this.palabra); //debug
-    console.log(this.cykTabla);//debug
-    console.log("--------------EMPIEZA--------------");//debug
-    
+    console.log(this.generadoresArray);
+    console.log(this.palabra); 
+    console.log("-----------------EMPIEZA------------------");    
 
     let offSet = 1;
     
     for(let columna = 1; columna <= maxI; columna++){ //Recorre horizontal
       let filaActual = maxI;
-      for (let colActual = columna; colActual <= maxI; colActual++) { //Recorre en diagonal
-        //HASTA AQUI TENGO CASILLA ACTUAL
+      for (let colActual = columna; colActual <= maxI; colActual++) { //Recorre en diagonal. Aqui ya tengo mi casilla actual a evaluar
+      
+        let profundidadActual = 0;
         let resp = new Array();
+      
+        //DEBUG
+        console.log("------------------ACTUAL: (" + colActual + "," + filaActual + ")--------------------------");
+        
 
-       
         let checkFila = filaActual-1;
           for(let checkCol = colActual-offSet; checkCol < colActual; checkCol++){ //for para iterar producciones con respecto a actual
             
-            let respsCasilla = 0;
-            console.log("ACTUAL: " + colActual + "," + filaActual);
-            console.log("checkH: " + checkCol + "," + filaActual);
-            console.log("checkV: " + colActual + "," + checkFila);
-            console.log("offset: " + offSet);
-            
-            
-            
-            console.log(this.cykTabla[checkCol][filaActual][0]); //debug
-            console.log(this.cykTabla[colActual][checkFila][0]); //debug
+            let profundidadA = 0;
+            let profundidadB = 0;
 
-            while(this.cykTabla[checkCol][filaActual][respsCasilla] || this.cykTabla[colActual][checkFila][respsCasilla]){ //Profundidad de casilla
-              console.log("entrawhile");
+            while(true){ //Profundidad de casilla
               
+              //Debug
+              console.log("Compara: " + this.cykTabla[checkCol][filaActual][profundidadA] + " con " + this.cykTabla[colActual][checkFila][profundidadB]); //debug
+
+              //Concatenación de valores en casillas
               let prod1;
               let prod2;
-
-              if (!this.cykTabla[checkCol][filaActual][respsCasilla]) {
-                prod1 = "";
-              }else{
-                prod1 = this.cykTabla[checkCol][filaActual][respsCasilla];
-              }
-
-              if (!this.cykTabla[colActual][checkFila][respsCasilla]) {
-                prod2 = "";
-              }else{
-                prod2 = this.cykTabla[colActual][checkFila][respsCasilla];
-              }
-
+              prod1 = this.cykTabla[checkCol][filaActual][profundidadA];
+              prod2 = this.cykTabla[colActual][checkFila][profundidadB];
               let prod = prod1 + prod2;
 
-              console.log(prod);
               
-
+              //Verificacion de productores con respecto a comparacion de valores y asignacion de respuesta en actual
               if (this.verificaGeneradoBoolean(prod)) {
-                resp.push(this.verificaGenerado(prod));
+                resp = this.verificaGenerado(prod);
+                for(let rc = 0; rc < resp.length; rc++){
+                  if(!this.existeEnCasilla(colActual, filaActual, profundidadActual, resp[rc])){
+                    this.cykTabla[colActual][filaActual][profundidadActual]= resp[rc];
+                    console.log("Inserta " + this.cykTabla[colActual][filaActual][profundidadActual] + " en coordenada: " + colActual + "," + filaActual + "," + profundidadActual);
+                    profundidadActual++;
+                  }else{
+                    console.log(resp[rc] + " ya estaba");
+                  }
+                }
               }
 
-              respsCasilla++;
+
+              //Control de loop de profundidad de casillas a comparar
+              if(this.cykTabla[colActual][checkFila][profundidadB + 1]){
+                profundidadB++;
+              }else if(this.cykTabla[checkCol][filaActual][profundidadA + 1]){
+                profundidadA++;
+                profundidadB = 0;
+              }else{
+                break;
+              }
+
             }
+
+
             checkFila--;
-            
           }
-
-        
-        console.log("salio de primer FOR--------------------------------");
-        
-
-        this.cykTabla[colActual][filaActual].push(resp);                
         filaActual--;
-
-        
       }
-      
       offSet++;
-      
     }
     
+    ////////////////FINAL CYK//////////////
 
     console.log(this.cykTabla); //debug
 
     let respuestasCasilla = 0;
     while(this.cykTabla[maxI][maxI][respuestasCasilla]){
-
       if(this.cykTabla[maxI][maxI][respuestasCasilla] == 'S'){
         this.resp = true;
+        break;
       }else{
         this.resp = false;
       }
-
       respuestasCasilla++;
     }
-
     this.primera = true;
   }
-
-
-
-
-
-
-
-
 
 
 
@@ -145,22 +129,39 @@ export class AppComponent {
   ///////////////////////////////Utilidades///////////////////////////////////
 
   inicializaTabla(palabra: string) {
-    let maxI = palabra.length - 1;
-    this.cykTabla = this.inicializaArray(maxI + 1);
-    let j = maxI;
-    for (let i = 0; i <= maxI; i++) {
-      this.cykTabla[i][j][0] = palabra[i];
+    this.cykTabla = this.inicializaArray(palabra.length);
+    let j = palabra.length - 1;
+    let generadoresIniciales = this.encuentraGenIniciales(palabra);
+    for (let i = 0; i <= palabra.length - 1; i++) {    
+      this.cykTabla[i][j] = generadoresIniciales[i];
       j--;
     }
   }
 
+
+  existeEnCasilla(colA, filA, prof, prod){
+    for(let i = 0; i <= prof; i++){
+      if(this.cykTabla[colA][filA][i] == prod){
+        return true;
+      }
+    }
+    return false;
+  }
+
+
+  encuentraGenIniciales(palabra:string){
+    let productoresIniciales = [];
+    for(let i = 0; i<palabra.length; i++){
+      productoresIniciales[i] = this.verificaGenerado(palabra[i]);
+    }
+    return productoresIniciales;
+  }
 
 
   inicializaArray(rows) {
     var arr = [];
     for (var i = 0; i < rows; i++) {
       arr[i] = [];
-      
       for (var x = 0; x < rows; x++) {
         arr[i][x] = [];
       };
@@ -177,10 +178,9 @@ export class AppComponent {
         productores.push(this.generadoresArray[i][0]);
       }
     }
-    console.log(productores);
-    
     return productores;
   }
+
 
   verificaGeneradoBoolean(prod:any) {
     for (let i = 0; i < this.generadoresArray.length; i++) {
@@ -192,12 +192,9 @@ export class AppComponent {
   }
 
 
-
   guardaGen(generador: string) {
     this.generadoresArray.push([generador.split('>')[0], generador.split('>')[1]]);
   }
-
-
 
 
   guardaBTrack() {
