@@ -8,17 +8,18 @@ import { Component, ɵConsole } from '@angular/core';
 })
 export class AppComponent {
 
-  //iniciales
   resp: boolean;
   palabra: string;
   cykTabla: any[][][];
   generadoresArray: any[];
-  bTrack: any[];
   primera: boolean;
+  historia: any[][];
+  contadorHistoria: number = 0;
+  caminoS: any[] = new Array();
+  arbol: string = '';
 
   constructor() {
     this.generadoresArray = new Array();
-    this.bTrack = [];
     this.palabra = '';
   };
 
@@ -28,8 +29,23 @@ export class AppComponent {
  
   cyk(palabra: string) {
 
+    //DEBUG
+    // palabra = "baaba"
+    // this.generadoresArray = [
+    //   ["S", "AB"],
+    //   ["S", "BC"],
+    //   ["A", "a"],
+    //   ["A", "BA"],
+    //   ["B", "b"],
+    //   ["B", "CC"],
+    //   ["C", "a"],
+    //   ["C", "AB"],
+    // ]
+
+    
     this.palabra = palabra;
     this.inicializaTabla(palabra);
+    this.inicializaArrayHistorial()
     let maxI = palabra.length - 1;
     
     console.log(this.generadoresArray);
@@ -46,7 +62,7 @@ export class AppComponent {
         let resp = new Array();
       
         //DEBUG
-        console.log("------------------ACTUAL: (" + colActual + "," + filaActual + ")--------------------------");
+        console.log("---------------ACTUAL: " + colActual + "," + filaActual + "----------------");
         
 
         let checkFila = filaActual-1;
@@ -74,7 +90,16 @@ export class AppComponent {
                 for(let rc = 0; rc < resp.length; rc++){
                   if(!this.existeEnCasilla(colActual, filaActual, profundidadActual, resp[rc])){
                     this.cykTabla[colActual][filaActual][profundidadActual]= resp[rc];
-                    console.log("Inserta " + this.cykTabla[colActual][filaActual][profundidadActual] + " en coordenada: " + colActual + "," + filaActual + "," + profundidadActual);
+                    
+                    this.guardaGenerador(
+                      this.cykTabla[colActual][filaActual][profundidadActual], //GeneradorEncontrado
+                      colActual, filaActual, profundidadActual, //coordenadas de encontrado
+                      this.cykTabla[checkCol][filaActual][profundidadA], //A
+                      checkCol, filaActual, profundidadA, //Coordenadas A
+                      this.cykTabla[colActual][checkFila][profundidadB], //B
+                      colActual, checkFila, profundidadB //Coordenadas B
+                    );
+                    
                     profundidadActual++;
                   }else{
                     console.log(resp[rc] + " ya estaba");
@@ -111,13 +136,22 @@ export class AppComponent {
     while(this.cykTabla[maxI][maxI][respuestasCasilla]){
       if(this.cykTabla[maxI][maxI][respuestasCasilla] == 'S'){
         this.resp = true;
+        this.backTrack('S'+maxI+maxI+respuestasCasilla);
+        console.log(this.caminoS);
+        this.generaArbol();
         break;
       }else{
         this.resp = false;
       }
       respuestasCasilla++;
     }
+
+    
+
     this.primera = true;
+
+    console.log(this.historia);
+    
   }
 
 
@@ -129,7 +163,7 @@ export class AppComponent {
   ///////////////////////////////Utilidades///////////////////////////////////
 
   inicializaTabla(palabra: string) {
-    this.cykTabla = this.inicializaArray(palabra.length);
+    this.cykTabla = this.inicializaArrayCYK(palabra.length);
     let j = palabra.length - 1;
     let generadoresIniciales = this.encuentraGenIniciales(palabra);
     for (let i = 0; i <= palabra.length - 1; i++) {    
@@ -158,7 +192,7 @@ export class AppComponent {
   }
 
 
-  inicializaArray(rows) {
+  inicializaArrayCYK(rows) {
     var arr = [];
     for (var i = 0; i < rows; i++) {
       arr[i] = [];
@@ -169,6 +203,24 @@ export class AppComponent {
     return arr;
   }
 
+
+  inicializaArrayHistorial() {
+    var arr = [];
+    let m = this.sizeHistorial(this.palabra.length);
+    for (var i = 0; i < m; i++) {
+      arr[i] = [];
+    }
+    this.historia = arr;
+  }
+
+
+  sizeHistorial(num) {
+    let r = num;
+    for(let i = 1; i < num; i++){
+      r = r + i;
+    }
+    return r + num;
+  }
 
 
   verificaGenerado(prod:any) {
@@ -193,11 +245,82 @@ export class AppComponent {
 
 
   guardaGen(generador: string) {
+
     this.generadoresArray.push([generador.split('>')[0], generador.split('>')[1]]);
+    
   }
 
 
-  guardaBTrack() {
+
+
+  guardaGenerador(GE, EX, EY, EZ, GA, AX, AY, AZ, GB, BX, BY, BZ) {
+    
+
+    let E:any = GE + EX + EY + EZ;
+    let A:any = GA + AX + AY + AZ;
+    let B:any = GB + BX + BY + BZ;
+
+    console.log("Encontrado: " + E);
+    console.log("por A: "+A+" y B: "+B);
+
+    this.historia[this.contadorHistoria][0] = E;
+    this.historia[this.contadorHistoria][1] = A;
+    this.historia[this.contadorHistoria][2] = B;
+    
+    this.contadorHistoria++;
+
 
   }
+
+
+  backTrack(cord){
+
+    let A:string = cord;
+    let flag = 0;
+    
+    
+    
+    while(flag != this.sizeHistorial(this.palabra.length) && this.historia[flag][0] != A){
+      flag++;
+    }
+    
+    
+    if(flag != this.sizeHistorial(this.palabra.length)){
+      this.caminoS.push(A[0]);
+      this.backTrack(this.historia[flag][1]);
+      this.backTrack(this.historia[flag][2]);
+    }else{
+      this.caminoS.push(A[0]);
+      this.caminoS.push(this.origenInicialGen(A[0]));
+    }
+      
+  }
+
+
+  origenInicialGen(gen){
+    for(let i = 0; i<this.generadoresArray.length; i++){
+      if(this.generadoresArray[i][0] == gen && this.generadoresArray[i][1].length == 1){
+        return this.generadoresArray[i][1];
+      }
+    }
+  }
+
+
+  generaArbol(){
+
+    for(let i = 0; i<this.caminoS.length; i++){
+      this.arbol += " - " + this.caminoS[i];
+    }
+
+  };
+
+
+  esLower(c){
+    if(c == c.toUpperCase()){
+      return false;
+    }else{
+      return true;
+    }
+  }
+
 }
